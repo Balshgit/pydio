@@ -103,27 +103,21 @@ services:
     volumes:
       - cells_data:/data
 
-#  createbuckets:
-#    image: minio/mc:RELEASE.2023-02-28T00-12-59Z
-#    depends_on:
-#      - minio
-#    entrypoint: >
-#      /bin/sh -c "
-#      /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-#      /usr/bin/mc rm -r --force myminio/pydiods1;
-#      /usr/bin/mc rm -r --force myminio/personal;
-#      /usr/bin/mc rm -r --force myminio/cellsdata;
-#      /usr/bin/mc rm -r --force myminio/thumbs;
-#      /usr/bin/mc rm -r --force myminio/versions;
-#      /usr/bin/mc rm -r --force myminio/binaries;
-#      /usr/bin/mc mb myminio/pydiods1;
-#      /usr/bin/mc mb myminio/personal;
-#      /usr/bin/mc mb myminio/cellsdata;
-#      /usr/bin/mc mb myminio/thumbs;
-#      /usr/bin/mc mb myminio/versions;
-#      /usr/bin/mc mb myminio/binaries;
-#      exit 0;
-#      "
+  createbuckets:
+    image: minio/mc:RELEASE.2023-02-28T00-12-59Z
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb myminio/pydiods1;
+      /usr/bin/mc mb myminio/personal;
+      /usr/bin/mc mb myminio/cellsdata;
+      /usr/bin/mc mb myminio/thumbs;
+      /usr/bin/mc mb myminio/versions;
+      /usr/bin/mc mb myminio/binaries;
+      exit 0;
+      "
   #
   # CELLS MULTIPLE NODES
   # cells1 overrides env and volumes to access the install YAML
