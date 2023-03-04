@@ -1,3 +1,3 @@
-bot.{$RU_DOMAIN} {
+:8080 {
     reverse_proxy cells1:8080
 }
