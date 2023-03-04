@@ -169,7 +169,7 @@ services:
   # Caddy reverse proxy, exposed as self-signed on port 445
   caddy:
     image:  caddy:2.6.4-alpine
-    ports: ["8080:8080"]
+    ports: ["80:80", "443:443"]
     restart: unless-stopped
     volumes:
       - ./conf/Caddyfile:/etc/caddy/Caddyfile
