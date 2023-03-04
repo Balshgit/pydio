@@ -51,3 +51,18 @@ Access https://caddy:8585/ to access Cells. Enjoy!
 docker-compose down -v --remove-orphan
 ```
 
+## Clean jwt table
+
+```bash
+docker exec -i pydio_mysql mysql -u pydiouser -pcellspasswrd cells < clean-jwt.sql
+```
+
+
+```sql
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE hydra_oauth2_trusted_jwt_bearer_issuer;
+TRUNCATE hydra_jwk;
+SET FOREIGN_KEY_CHECKS = 0;
+
+```
+

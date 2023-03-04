@@ -13,6 +13,7 @@ services:
   # MySQL DB
   mysql:
     image: mysql:8.0.32
+    container_name: pydio_mysql
     restart: unless-stopped
     volumes:
       - mysql_data:/var/lib/mysql
@@ -26,12 +27,15 @@ services:
   # Mongo DB
   mongo:
     image:  mongo:6.0.4
+    container_name: pydio_mongo
     restart: unless-stopped
     expose: [27017]
 
   # Nats events broker
   nats:
     image: nats:2.9.15
+    container_name: pydio_nats
+    restart: unless-stopped
     expose:
       - 4222
       - 8222
@@ -40,12 +44,16 @@ services:
 
   redis:
     image: redis:7.0.9
+    container_name: pydio_redis
     hostname: redis
+    restart: unless-stopped
     expose: [6379]
 
   minio:
-    image: quay.io/minio/minio
-    command: server --console-address ":9001" /data
+    image: minio/minio:RELEASE.2023-02-27T18-10-45Z
+    command: [ "server", "/data", "--console-address", ":9001" ]
+    restart: unless-stopped
+    container_name: pydio_minio
     hostname: minio
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
@@ -55,10 +63,11 @@ services:
     ports:
       - "9001:9001"
     volumes:
-      - cells_data:/data
+      - ./cells_data:/data
 
   createbuckets:
     image: minio/mc:RELEASE.2023-02-28T00-12-59Z
+    container_name: pydio_create_buckets
     depends_on:
       - minio
     entrypoint: >
@@ -77,6 +86,7 @@ services:
     image: pydio/cells:4.1
     restart: unless-stopped
     hostname: cells
+    container_name: pydio_cells
     expose: [80]
     environment:
       - CELLS_WORKING_DIR=/var/cells
@@ -96,6 +106,7 @@ services:
   # Caddy reverse proxy, exposed as self-signed on port 445
   caddy:
     image:  caddy:2.6.4-alpine
+    container_name: pydio_caddy
     ports: ["8080:8080"]
     restart: unless-stopped
     volumes:
