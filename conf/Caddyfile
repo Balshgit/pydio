@@ -1,5 +1,5 @@
 {
-    https_port 8085
+    https_port 8080
     skip_install_trust
     local_certs
 }
