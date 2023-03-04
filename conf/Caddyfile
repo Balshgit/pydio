@@ -1,0 +1,15 @@
+{
+    https_port 8085
+    skip_install_trust
+    local_certs
+}
+localhost {
+    reverse_proxy {
+        to https://cells1:8080
+        transport http {
+            tls
+            tls_insecure_skip_verify
+        }
+    }
+    tls internal
+}
