@@ -82,7 +82,7 @@ services:
       - CELLS_WORKING_DIR=/var/cells
       - CELLS_BROKER=nats://nats:4222
       - CELLS_CACHE=redis://redis:6379
-      - CELLS_SITE_BIND=0.0.0.0:80
+      - CELLS_BIND=0.0.0.0:80
       - CELLS_SITE_EXTERNAL=https://${PUBLIC_FQDN}
       - CELLS_NO_TLS=1
       - CELLS_INSTALL_YAML=/pydio/config/install.yml
