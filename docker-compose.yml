@@ -13,7 +13,9 @@ x-cells: &cells-common
 #    - CELLS_CERTS_STORE=vault://vault:8200/caddycerts
     - CELLS_CACHE=redis://redis:6379
 #    - CELLS_ENABLE_PPROF=true
-    - CELLS_BIND_ADDRESS=0.0.0.0
+#    - CELLS_BIND_ADDRESS=0.0.0.0
+    - CELLS_BIND=${PUBLIC_FQDN}:443
+    - CELLS_EXTERNAL=https://${PUBLIC_FQDN}
 #    - VAULT_TOKEN=${VAULT_ROOT_TOKEN}
 
 volumes:
