@@ -83,7 +83,7 @@ services:
       - CELLS_BROKER=nats://nats:4222
       - CELLS_CACHE=redis://redis:6379
       - CELLS_BIND=0.0.0.0:80
-      - CELLS_EXTERNAL=http://localhost
+      - CELLS_EXTERNAL=https://${PUBLIC_FQDN}
       - CELLS_NO_TLS=1
       - CELLS_INSTALL_YAML=/pydio/config/install.yml
       - INSTALL_MYSQL_DB_USER=${MYSQL_DB_USER}
