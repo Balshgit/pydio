@@ -1,12 +1,17 @@
 version: '3.9'
 
 volumes:
-    cells_data: {}
+    cells_dir: {}
     mysql_data: {}
     etcd_data: {}
     caddy_data: {}
     caddy_logs: {}
     caddy_config: {}
+
+
+networks:
+  pydio-network:
+    name: pydio-network
 
 services:
 
@@ -23,6 +28,8 @@ services:
       - MYSQL_USER=${MYSQL_DB_USER}
       - MYSQL_PASSWORD=${MYSQL_DB_PASSWORD}
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci]
+    networks:
+      - pydio-network
 
   # Mongo DB
   mongo:
@@ -30,6 +37,8 @@ services:
     container_name: pydio_mongo
     restart: unless-stopped
     expose: [27017]
+    networks:
+      - pydio-network
 
   # Nats events broker
   nats:
@@ -41,6 +50,8 @@ services:
       - 8222
     #for verbose, use "--http_port 8222 -V"
     command: "--http_port 8222"
+    networks:
+      - pydio-network
 
   redis:
     image: redis:7.0.9
@@ -48,6 +59,8 @@ services:
     hostname: redis
     restart: unless-stopped
     expose: [6379]
+    networks:
+      - pydio-network
 
   minio:
     image: minio/minio:RELEASE.2023-02-27T18-10-45Z
@@ -64,6 +77,8 @@ services:
       - "9001:9001"
     volumes:
       - ./cells_data:/data
+    networks:
+      - pydio-network
 
   createbuckets:
     image: minio/mc:RELEASE.2023-02-28T00-12-59Z
@@ -81,9 +96,11 @@ services:
       /usr/bin/mc mb myminio/binaries;
       exit 0;
       "
+    networks:
+      - pydio-network
 
   cells:
-    image: pydio/cells:4.1
+    image: pydio/cells:4.0.7
     restart: unless-stopped
     hostname: cells
     container_name: pydio_cells
@@ -101,7 +118,28 @@ services:
       - INSTALL_MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - INSTALL_MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     volumes:
-      - ./conf/install-conf.yml:/pydio/config/install.yml:ro
+      - ./conf/install-conf.yml:/pydio/config/install.yml
+      - cells_dir:/var/cells
+    networks:
+      - pydio-network
+
+  collabora:
+    image: collabora/code:latest
+    restart: unless-stopped
+    hostname: collabora
+    container_name: pydio_collabora
+    cap_add:
+      - MKNOD
+    expose:
+      - 9980
+    environment:
+      - aliasgroup1=https://bot.mywistr.ru:443
+      - dictionaries='en_US ru'
+      - VIRTUAL_NETWORK=pydio-network
+      - VIRTUAL_PORT=9980
+      - extra_params=--o:ssl.enable=false --o:ssl.termination=true --o:tls.enable=false
+    networks:
+      - pydio-network
 
   # Caddy reverse proxy, exposed as self-signed on port 445
   caddy:
@@ -114,3 +152,5 @@ services:
       - caddy_logs:/var/caddy/logs
       - caddy_data:/data
       - caddy_config:/config
+    networks:
+      - pydio-network
