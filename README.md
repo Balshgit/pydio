@@ -1,54 +1,50 @@
-# HA setup
+# Fast simple cloud based on GO language
 
-Simple docker-compose deployment to experiment with Cells v4 Clustering model.
-It uses `pydio/cells:unstable` docker image, use whatever image by editing the docker-compose.yml file.
+- with Redis cache
+- data storage on S3 Minio
+- queue broker nats
 
-## Preparing dependencies
+Simple docker-compose deployment to experiment with Cells v4.
+It uses `pydio/cells` docker image, use whatever image by editing the docker-compose.yml file.
 
-HA deployments relies on external dependencies to make Cells image fully stateless. 
-This sample creates the following images : MySQL, MongoDB, NATS.io, ETCD, Hashicorp Vault and Redis.
+## Starting Cells
 
-This Vault requires a manual preparation for a specific key/value store (see below)
-
-```sh
-cd <this folder>
-# start all third-party services
-docker-compose up -d mysql mongo nats etcd vault redis minio caddy
-
-# create buckets in minio 
-docker-compose up createbuckets
-
-# Create a dedicated kvstore for certificates in Vault (configured in DEV mode with a preset VAULT_TOKEN, this should not be the case in production)
-docker-compose exec -e VAULT_ADDR=http://localhost:8200 -e VAULT_TOKEN=secret_vault_token vault vault secrets enable -version=2 -path=caddycerts kv
+```bash
+docker-compose up -d
 ```
 
-## Starting Cells Nodes
+on web browser: http://localhost:8080
 
-```sh
-# Start one node, then open https://localhost:8080 to perform the install, it will read the conf/install-conf.yaml file
-docker-compose up -d cells1; docker-compose logs -f cells1
+login: admin
+password: admin
+
+## storing data
+
+setup directory with env `MINIO_STORE_DATA` in .env file
+
+if directory created by user
+```bash
+sudo chown $USER:$USER /path/to/data/directory -R
+sudo chmod +ugo+rw
 ```
 
-Now you can spin more cells nodes:
-```sh
-# Once install is finished, start other nodes 
-docker-compose up -d cells2 cells3; docker-compose logs -f cells2 cells3
-```
+By default it in current directory named `cells_data`
+ 
 
 ## Caddy LoadBalancer Access
 
-Caddy load balancer is configured in self-signed mode. 
-This requires adding localhost => caddy domain name to your local /etc/hosts file.
-
-Once started, it will monitor cells instances on /pprofs endpoint to automatically enable/disable upstreams.
-
-Access https://caddy:8585/ to access Cells. Enjoy!
+Access https://caddy:8080/ to access Cells. Enjoy!
 
 ## Stopping cluster
+
+```bash
+docker-compose down -v
+```
 
 ```sh
 # To clean everything
 docker-compose down -v --remove-orphan
+sudo rm -rf ./cells_data or user your `MINIO_STORE_DATA` storage path
 ```
 
 ## Clean jwt table
@@ -57,7 +53,7 @@ docker-compose down -v --remove-orphan
 docker exec -i pydio_mysql mysql -u pydiouser -pcellspasswrd cells < clean-jwt.sql
 ```
 
-
+- if on `docker-compose down` and next `docker-compose up` getting error with jwt token
 ```sql
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE hydra_oauth2_trusted_jwt_bearer_issuer;

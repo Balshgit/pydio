@@ -1,16 +1,21 @@
 version: '3.9'
 
 volumes:
-    cells_dir: {}
-    mysql_data: {}
-    caddy_data: {}
-    caddy_logs: {}
-    caddy_config: {}
+    cells_dir:
+      name: pydio_cells_dir
+    mysql_data:
+      name: pydio_mysql_data
+    caddy_data:
+      name: pydio_caddy_data
+    caddy_logs:
+      name: pydio_caddy_logs
+    caddy_config:
+      name: pydio_caddy_config
 
 
 networks:
   pydio-network:
-    name: pydio-network
+    name: pydio_network
 
 services:
 
@@ -19,6 +24,7 @@ services:
     image: mysql:8.0.32
     container_name: pydio_mysql
     restart: unless-stopped
+    expose: [3306]
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
@@ -35,7 +41,7 @@ services:
     image:  mongo:6.0.4
     container_name: pydio_mongo
     restart: unless-stopped
-    expose: [27017]
+    expose: ["27017"]
     networks:
       - pydio-network
 
@@ -45,8 +51,8 @@ services:
     container_name: pydio_nats
     restart: unless-stopped
     expose:
-      - 4222
-      - 8222
+      - "4222"
+      - "8222"
     #for verbose, use "--http_port 8222 -V"
     command: "--http_port 8222"
     networks:
@@ -57,7 +63,7 @@ services:
     container_name: pydio_redis
     hostname: redis
     restart: unless-stopped
-    expose: [6379]
+    expose: ["6379"]
     networks:
       - pydio-network
 
@@ -71,11 +77,11 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     expose:
-      - 9000
+      - "9000"
     ports:
       - "9001:9001"
     volumes:
-      - ./cells_data:/data
+      - ${MINIO_STORE_DATA}:/data
     networks:
       - pydio-network
 
