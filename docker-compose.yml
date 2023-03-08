@@ -105,7 +105,7 @@ services:
       - pydio-network
 
   cells:
-    image: pydio/cells:4.0.7
+    image: pydio/cells:4.1.1
     restart: unless-stopped
     hostname: cells
     container_name: pydio_cells
