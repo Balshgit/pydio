@@ -19,7 +19,7 @@ on web browser: http://localhost:8080
 login: admin
 password: admin
 
-## storing data
+## Storing data
 
 - User data
 setup directory with env `MINIO_STORE_DATA` in .env file
@@ -58,17 +58,8 @@ sudo rm -rf ./cells_data or user your `MINIO_STORE_DATA` storage path
 if on `docker-compose down` and next `docker-compose up` getting error "Could not ensure that signing keys are correct!"
 
 ```bash
-docker exec -i pydio_mysql mysql -u pydiouser -pcellspasswrd cells < clean-jwt.sql
+docker exec -i pydio_mysql mysql -u pydiouser -pcellspasswrd cells < scripts/clean-jwt.sql
 ```
-
-```sql
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE hydra_oauth2_trusted_jwt_bearer_issuer;
-TRUNCATE hydra_jwk;
-SET FOREIGN_KEY_CHECKS = 0;
-
-```
-
 
 ## Backup
 
