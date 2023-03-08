@@ -10,6 +10,7 @@ It uses `pydio/cells` docker image, use whatever image by editing the docker-com
 ## Starting Cells
 
 ```bash
+cp .env.template .env
 docker-compose up -d
 ```
 
