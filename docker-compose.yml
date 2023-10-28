@@ -21,7 +21,7 @@ services:
 
   # MySQL DB
   mysql:
-    image: mysql:8.0.32
+    image: mysql:8.2.0
     container_name: pydio_mysql
     restart: unless-stopped
     expose: [3306]
@@ -38,7 +38,7 @@ services:
 
   # Mongo DB
   mongo:
-    image:  mongo:6.0.4
+    image:  mongo:7.0.2
     container_name: pydio_mongo
     restart: unless-stopped
     expose: ["27017"]
@@ -47,7 +47,7 @@ services:
 
   # Nats events broker
   nats:
-    image: nats:2.9.15
+    image: nats:2.10.4
     container_name: pydio_nats
     restart: unless-stopped
     expose:
@@ -59,7 +59,7 @@ services:
       - pydio-network
 
   redis:
-    image: redis:7.0.9
+    image: redis:7.2.2
     container_name: pydio_redis
     hostname: redis
     restart: unless-stopped
@@ -68,7 +68,7 @@ services:
       - pydio-network
 
   minio:
-    image: minio/minio:RELEASE.2023-02-27T18-10-45Z
+    image: minio/minio:RELEASE.2023-10-25T06-33-25Z
     command: [ "server", "/data", "--console-address", ":9001" ]
     restart: unless-stopped
     container_name: pydio_minio
@@ -86,7 +86,7 @@ services:
       - pydio-network
 
   createbuckets:
-    image: minio/mc:RELEASE.2023-02-28T00-12-59Z
+    image: minio/mc:RELEASE.2023-10-24T21-42-22Z
     container_name: pydio_create_buckets
     depends_on:
       - minio
@@ -105,7 +105,7 @@ services:
       - pydio-network
 
   cells:
-    image: pydio/cells:4.1.1
+    image: pydio/cells:4.3.0
     restart: unless-stopped
     hostname: cells
     container_name: pydio_cells
@@ -130,7 +130,7 @@ services:
 
   # Caddy reverse proxy, exposed as self-signed on port 445
   caddy:
-    image:  caddy:2.6.4-alpine
+    image:  caddy:2.7.5-alpine
     container_name: pydio_caddy
     ports: ["8080:8080"]
     restart: unless-stopped
